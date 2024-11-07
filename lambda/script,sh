@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Copy and compile main.go for Lambda (using GOOS=linux because Lambda runs in a Linux environment)
+GOOS=linux GOARCH=amd64 go build -o main .
+
+# Install AWS SAM CLI (check if SAM CLI is already installed, if not, it will install it)
+if ! command -v sam &> /dev/null
+then
+    echo "AWS SAM CLI is not installed. Proceeding with installation..."
+    curl -Lo sam-installation-script https://github.com/aws/aws-sam-cli/releases/download/v2.0.0/sam-installation-script-linux-x86_64.sh
+    sudo bash sam-installation-script
+else
+    echo "AWS SAM CLI is already installed."
+fi
+
+# If the working directory is not correct, make sure you're inside your project before running 'sam build'
+sam build
+
+# Deploy to AWS using SAM. The --guided flag will guide you through the interactive deployment process
+sam deploy --guided
+
+# Message when done
+echo "Done!"

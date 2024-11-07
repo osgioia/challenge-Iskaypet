@@ -1,0 +1,694 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a sample server for using Swagger with Echo.",
+        "title": "Swagger Example API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/api/v1/clients": {
+            "get": {
+                "description": "Recupera una lista de todos los clientes en la base de datos",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Obtiene todos los clientes",
+                "responses": {
+                    "200": {
+                        "description": "Lista de clientes",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Client"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Crea un nuevo cliente con los datos proporcionados",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Crear cliente",
+                "parameters": [
+                    {
+                        "description": "Información del Cliente",
+                        "name": "client",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Client"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Cliente creado exitosamente",
+                        "schema": {
+                            "$ref": "#/definitions/models.Client"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/clients/kpi": {
+            "get": {
+                "description": "Calcula el promedio y la desviación estándar de edad de los clientes",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "KPI de clientes",
+                "responses": {
+                    "200": {
+                        "description": "KPI de clientes calculado",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ClientKPI"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/clients/{id}": {
+            "get": {
+                "description": "Recupera un cliente específico usando su ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Obtener cliente por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID del Cliente",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalles del cliente",
+                        "schema": {
+                            "$ref": "#/definitions/models.Client"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Actualiza la información de un cliente existente",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Actualizar cliente",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID del Cliente",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Información actualizada del Cliente",
+                        "name": "client",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Client"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cliente actualizado exitosamente",
+                        "schema": {
+                            "$ref": "#/definitions/models.Client"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Elimina un cliente específico usando su ID",
+                "tags": [
+                    "Clientes"
+                ],
+                "summary": "Eliminar cliente",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID del Cliente",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Cliente eliminado exitosamente"
+                    }
+                }
+            }
+        },
+        "/api/v1/users": {
+            "get": {
+                "description": "Recupera una lista de todos los usuarios registrados",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Obtener todos los usuarios",
+                "responses": {
+                    "200": {
+                        "description": "Lista de usuarios",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.User"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Crea un nuevo usuario con los datos proporcionados",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Crear usuario",
+                "parameters": [
+                    {
+                        "description": "Información del Usuario",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Usuario creado exitosamente",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/{id}": {
+            "get": {
+                "description": "Recupera un usuario específico usando su ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Obtener usuario por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID del Usuario",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalles del usuario",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Actualiza los datos de un usuario específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Actualizar usuario",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID del Usuario",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Información del Usuario",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuario actualizado exitosamente",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Elimina un usuario específico usando su ID",
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Eliminar usuario",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID del Usuario",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Usuario eliminado exitosamente"
+                    }
+                }
+            }
+        },
+        "/api/v1/users/{id}/disable": {
+            "put": {
+                "description": "Cambia el estado de un usuario a deshabilitado",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Deshabilitar usuario",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID del Usuario",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuario deshabilitado",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/{id}/enable": {
+            "put": {
+                "description": "Cambia el estado de un usuario a habilitado",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Habilitar usuario",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID del Usuario",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuario habilitado",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/{id}/reset_password": {
+            "put": {
+                "description": "Cambia la contraseña de un usuario a una nueva",
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Restablecer contraseña",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID del Usuario",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Nueva contraseña",
+                        "name": "new_password",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Contraseña restablecida exitosamente"
+                    }
+                }
+            }
+        },
+        "/groups": {
+            "get": {
+                "description": "Recupera todos los grupos de la base de datos",
+                "tags": [
+                    "Group"
+                ],
+                "summary": "Obtiene todos los grupos",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Group"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Crea un nuevo grupo en la base de datos",
+                "tags": [
+                    "Group"
+                ],
+                "summary": "Crea un grupo",
+                "parameters": [
+                    {
+                        "description": "Datos del grupo",
+                        "name": "group",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Group"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Group"
+                        }
+                    }
+                }
+            }
+        },
+        "/groups/{group_id}": {
+            "delete": {
+                "description": "Elimina un grupo de la base de datos basado en el ID proporcionado",
+                "tags": [
+                    "Group"
+                ],
+                "summary": "Elimina un grupo",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID del grupo",
+                        "name": "group_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Group deleted"
+                    }
+                }
+            }
+        },
+        "/groups/{id}": {
+            "get": {
+                "description": "Recupera un grupo específico basado en el ID proporcionado",
+                "tags": [
+                    "Group"
+                ],
+                "summary": "Obtiene un grupo",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID del grupo",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Group"
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "Autentica un usuario y crea una sesión",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Autenticar usuario",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Nombre de usuario",
+                        "name": "username",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Contraseña",
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Inicio de sesión exitoso",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/groups/{group_id}": {
+            "put": {
+                "description": "Asigna un grupo existente a un usuario basado en el ID del usuario y del grupo",
+                "tags": [
+                    "Group"
+                ],
+                "summary": "Asigna un grupo a un usuario",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID del usuario",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID del grupo",
+                        "name": "group_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Group assigned"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Elimina la relación de un grupo asignado a un usuario basado en sus IDs",
+                "tags": [
+                    "Group"
+                ],
+                "summary": "Elimina la asignación de un grupo a un usuario",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID del usuario",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID del grupo",
+                        "name": "group_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Group unassigned"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "handlers.ClientKPI": {
+            "type": "object",
+            "properties": {
+                "age_standard_deviation": {
+                    "type": "number"
+                },
+                "average_age": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.Client": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_login": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Group": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.User": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "groups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Group"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_enabled": {
+                    "type": "boolean"
+                },
+                "last_login": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

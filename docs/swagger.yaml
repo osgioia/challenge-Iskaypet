@@ -1,0 +1,459 @@
+basePath: /
+definitions:
+  handlers.ClientKPI:
+    properties:
+      age_standard_deviation:
+        type: number
+      average_age:
+        type: number
+    type: object
+  models.Client:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      last_login:
+        type: string
+      last_name:
+        type: string
+      name:
+        type: string
+    type: object
+  models.Group:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      groups:
+        items:
+          $ref: '#/definitions/models.Group'
+        type: array
+      id:
+        type: integer
+      is_enabled:
+        type: boolean
+      last_login:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a sample server for using Swagger with Echo.
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /api/v1/clients:
+    get:
+      description: Recupera una lista de todos los clientes en la base de datos
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de clientes
+          schema:
+            items:
+              $ref: '#/definitions/models.Client'
+            type: array
+      summary: Obtiene todos los clientes
+      tags:
+      - Clientes
+    post:
+      consumes:
+      - application/json
+      description: Crea un nuevo cliente con los datos proporcionados
+      parameters:
+      - description: Información del Cliente
+        in: body
+        name: client
+        required: true
+        schema:
+          $ref: '#/definitions/models.Client'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Cliente creado exitosamente
+          schema:
+            $ref: '#/definitions/models.Client'
+      summary: Crear cliente
+      tags:
+      - Clientes
+  /api/v1/clients/{id}:
+    delete:
+      description: Elimina un cliente específico usando su ID
+      parameters:
+      - description: ID del Cliente
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: Cliente eliminado exitosamente
+      summary: Eliminar cliente
+      tags:
+      - Clientes
+    get:
+      description: Recupera un cliente específico usando su ID
+      parameters:
+      - description: ID del Cliente
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Detalles del cliente
+          schema:
+            $ref: '#/definitions/models.Client'
+      summary: Obtener cliente por ID
+      tags:
+      - Clientes
+    put:
+      description: Actualiza la información de un cliente existente
+      parameters:
+      - description: ID del Cliente
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Información actualizada del Cliente
+        in: body
+        name: client
+        required: true
+        schema:
+          $ref: '#/definitions/models.Client'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cliente actualizado exitosamente
+          schema:
+            $ref: '#/definitions/models.Client'
+      summary: Actualizar cliente
+      tags:
+      - Clientes
+  /api/v1/clients/kpi:
+    get:
+      description: Calcula el promedio y la desviación estándar de edad de los clientes
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: KPI de clientes calculado
+          schema:
+            $ref: '#/definitions/handlers.ClientKPI'
+      summary: KPI de clientes
+      tags:
+      - Clientes
+  /api/v1/users:
+    get:
+      description: Recupera una lista de todos los usuarios registrados
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de usuarios
+          schema:
+            items:
+              $ref: '#/definitions/models.User'
+            type: array
+      summary: Obtener todos los usuarios
+      tags:
+      - Usuarios
+    post:
+      consumes:
+      - application/json
+      description: Crea un nuevo usuario con los datos proporcionados
+      parameters:
+      - description: Información del Usuario
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Usuario creado exitosamente
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: Crear usuario
+      tags:
+      - Usuarios
+  /api/v1/users/{id}:
+    delete:
+      description: Elimina un usuario específico usando su ID
+      parameters:
+      - description: ID del Usuario
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: Usuario eliminado exitosamente
+      summary: Eliminar usuario
+      tags:
+      - Usuarios
+    get:
+      description: Recupera un usuario específico usando su ID
+      parameters:
+      - description: ID del Usuario
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Detalles del usuario
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: Obtener usuario por ID
+      tags:
+      - Usuarios
+    put:
+      consumes:
+      - application/json
+      description: Actualiza los datos de un usuario específico
+      parameters:
+      - description: ID del Usuario
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Información del Usuario
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Usuario actualizado exitosamente
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: Actualizar usuario
+      tags:
+      - Usuarios
+  /api/v1/users/{id}/disable:
+    put:
+      description: Cambia el estado de un usuario a deshabilitado
+      parameters:
+      - description: ID del Usuario
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Usuario deshabilitado
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: Deshabilitar usuario
+      tags:
+      - Usuarios
+  /api/v1/users/{id}/enable:
+    put:
+      description: Cambia el estado de un usuario a habilitado
+      parameters:
+      - description: ID del Usuario
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Usuario habilitado
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: Habilitar usuario
+      tags:
+      - Usuarios
+  /api/v1/users/{id}/reset_password:
+    put:
+      description: Cambia la contraseña de un usuario a una nueva
+      parameters:
+      - description: ID del Usuario
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Nueva contraseña
+        in: body
+        name: new_password
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Contraseña restablecida exitosamente
+      summary: Restablecer contraseña
+      tags:
+      - Usuarios
+  /groups:
+    get:
+      description: Recupera todos los grupos de la base de datos
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Group'
+            type: array
+      summary: Obtiene todos los grupos
+      tags:
+      - Group
+    post:
+      description: Crea un nuevo grupo en la base de datos
+      parameters:
+      - description: Datos del grupo
+        in: body
+        name: group
+        required: true
+        schema:
+          $ref: '#/definitions/models.Group'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Group'
+      summary: Crea un grupo
+      tags:
+      - Group
+  /groups/{group_id}:
+    delete:
+      description: Elimina un grupo de la base de datos basado en el ID proporcionado
+      parameters:
+      - description: ID del grupo
+        in: path
+        name: group_id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: Group deleted
+      summary: Elimina un grupo
+      tags:
+      - Group
+  /groups/{id}:
+    get:
+      description: Recupera un grupo específico basado en el ID proporcionado
+      parameters:
+      - description: ID del grupo
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Group'
+      summary: Obtiene un grupo
+      tags:
+      - Group
+  /login:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Autentica un usuario y crea una sesión
+      parameters:
+      - description: Nombre de usuario
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: Contraseña
+        in: formData
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Inicio de sesión exitoso
+          schema:
+            type: string
+      summary: Autenticar usuario
+      tags:
+      - Autenticación
+  /users/{id}/groups/{group_id}:
+    delete:
+      description: Elimina la relación de un grupo asignado a un usuario basado en
+        sus IDs
+      parameters:
+      - description: ID del usuario
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: ID del grupo
+        in: path
+        name: group_id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Group unassigned
+      summary: Elimina la asignación de un grupo a un usuario
+      tags:
+      - Group
+    put:
+      description: Asigna un grupo existente a un usuario basado en el ID del usuario
+        y del grupo
+      parameters:
+      - description: ID del usuario
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: ID del grupo
+        in: path
+        name: group_id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Group assigned
+      summary: Asigna un grupo a un usuario
+      tags:
+      - Group
+swagger: "2.0"

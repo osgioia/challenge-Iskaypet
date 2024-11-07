@@ -1,0 +1,83 @@
+Descripción del Desafío (con Docker y preparado para Lambda + KPI de Clientes):
+
+El reto consiste en desarrollar una API en Golang que permita gestionar clientes, usando Docker para contenerizar la aplicación y dejando todo listo para que la API pueda ser fácilmente desplegada en AWS Lambda. Además, se debe permitir la carga de edad y fecha de nacimiento de los clientes, y se debe implementar un endpoint que devuelva KPI de los clientes, como el promedio de edad y la desviación estándar.
+
+Requisitos del Desafío:
+   - Stack Tecnológico:
+   - Lenguaje: Golang.
+   - Framework HTTP: Echo o Gin.
+   - Base de datos: SQLite (o una base de datos en memoria para simplificar).
+
+Contenerización: Docker.
+Gestión de dependencias: Utilizar Go Modules.
+Documentación de la API: Implementar Swagger para la documentación automática de la API.
+Preparado para AWS Lambda: El código debe estar estructurado para facilitar su despliegue en AWS Lambda o entornos similares.
+
+Endpoints Requeridos:
+   - GET /clients: Obtiene la lista de todos los clientes desde la base de datos en SQLite o en memoria.
+   - GET /clients/{id}: Obtiene los detalles de un cliente específico.
+   - POST /clients: Crea un nuevo cliente. El cuerpo del request debe incluir el nombre, apellido, email, número de teléfono, edad y fecha de nacimiento.
+   - PUT /clients/{id}: Actualiza un cliente existente.
+   - DELETE /clients/{id}: Elimina un cliente específico.
+   - GET /clients/kpi: Devuelve KPI de los clientes, tales como:
+       Promedio de edad.
+       Desviación estándar de la edad.
+
+Validaciones de Entrada:
+   - Los campos name, last_name, email, edad y fecha de nacimiento son obligatorios para crear un cliente.
+   - Validar que el email tenga un formato correcto.
+   - El número de teléfono debe ser numérico y tener un mínimo de 7 dígitos.
+   - La fecha de nacimiento debe ser válida y coherente con la edad provista.
+   - Manejo de errores claros y consistentes para casos como cliente no encontrado, datos inválidos, etc.
+
+Persistencia:
+Los clientes deben almacenarse localmente en una base de datos SQLite o en una estructura en memoria, permitiendo un despliegue rápido.
+
+Contenerización con Docker:
+   - Crear un Dockerfile para la aplicación Golang, con una imagen base ligera (por ejemplo, golang:alpine).
+   - El contenedor debe exponer el puerto en el que la API estará escuchando.
+   - Se debe poder ejecutar la aplicación localmente usando Docker para pruebas y desarrollo.
+
+Preparación para AWS Lambda:
+ - El código debe estar preparado para ser empaquetado y desplegado en un entorno como AWS Lambda. Se debe incluir:
+    - Handler adaptado para Lambda (lambda.HandlerFunc) o estructura similar.
+    - Instrucciones claras para empaquetar la aplicación en un archivo ZIP compatible con AWS Lambda.
+
+KPI de Clientes:
+
+Crear un endpoint GET /clients/kpi que calcule y devuelva los siguientes indicadores clave:
+      - Promedio de edad: El cálculo del promedio de edad entre todos los clientes registrados.
+  - Desviación estándar de edad: Calcular la variación de las edades respecto al promedio.
+  - Los KPI deben calcularse en tiempo real basados en los clientes almacenados.
+
+Testing:
+   - Escribir pruebas unitarias para los handlers (endpoints).
+   - Crear pruebas de integración para asegurarse de que la API funciona correctamente.
+
+Estructura del Proyecto:
+/handlers: Los handlers o controladores para manejar las peticiones HTTP.
+/models: Las estructuras de datos y lógica de negocio para los clientes.
+/middleware: Cualquier middleware necesario, como autenticación.
+/database: Configuración de la base de datos SQLite o lógica de persistencia en memoria.
+/docker: Archivos relacionados con Docker, como el Dockerfile.
+/lambda: Lógica o configuraciones necesarias para empaquetar y ejecutar la aplicación en AWS Lambda.
+
+Requisitos Técnicos Específicos:
+  - Escalabilidad: El código debe estar modularizado y preparado para escalar, tanto a nivel local como en entornos serverless.
+  - Optimización: Se valorará la optimización para un entorno serverless, como minimizar el tamaño del contenedor y reducir tiempos de arranque.
+
+Documentación:
+   - Implementar Swagger para la documentación de los endpoints.
+   - Incluir documentación sobre cómo ejecutar la aplicación localmente con Docker, y cómo empaquetarla para su despliegue en AWS Lambda.
+
+
+Duración Estimada:
+4-6 horas para un desarrollador con experiencia en Golang y Docker.
+
+
+Entregables:
+Código fuente del proyecto.
+Dockerfile.
+Instrucciones claras sobre cómo levantar el proyecto localmente con Docker y cómo empaquetarlo para AWS Lambda.
+Documentación de la API (preferiblemente en Swagger).
+
