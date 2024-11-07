@@ -1,0 +1,1 @@
+Replace main.go and run script.sh.
