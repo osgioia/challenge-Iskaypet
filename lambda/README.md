@@ -1,1 +1,1 @@
-Replace main.go and run script.sh.
+Replace main.go in the root folder and run script.sh.

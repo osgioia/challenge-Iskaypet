@@ -8,7 +8,7 @@ Resources:
       Runtime: go1.x
       MemorySize: 128
       Timeout: 10
-      CodeUri: ./src
+      CodeUri: ..
       Environment:
         Variables:
           ENV: production
