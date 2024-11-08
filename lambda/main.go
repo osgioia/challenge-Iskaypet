@@ -6,15 +6,16 @@ import (
 	"golangApp/middlewares"
 	"os"
 
+	_ "golangApp/docs"
+
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	echoadapter "github.com/awslabs/aws-lambda-go-api-proxy/echo"
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/swaggo/echo-swagger"
-	"github.com/awslabs/aws-lambda-go-api-proxy/echo"
-	_ "golangApp/docs"
+	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
 // @title Swagger Example API
@@ -23,7 +24,6 @@ import (
 // @host localhost:8080
 // @BasePath /
 func main() {
-	// Set Lambda environment variables for local testing
 	os.Setenv("_LAMBDA_SERVER_PORT", "8080")
 	os.Setenv("AWS_LAMBDA_RUNTIME_API", "localhost:8081")
 
@@ -49,13 +49,12 @@ func main() {
 	// Apply the Basic Auth Middleware only to specific routes
 	auth.Use(middleware.BasicAuth(middlewares.BasicAuthMiddleware))
 
-	// Define routes without authentication
-	auth.GET("/clients/:id", handlers.GetClient)        // Obtiene un cliente por ID
-	auth.GET("/clients", handlers.GetAll)               // Obtiene todos los clientes
-	auth.GET("/clients/kpi", handlers.GetClientKPI)     // KPI de clientes
-	auth.POST("/clients", handlers.CreateClient)        // Crea un nuevo cliente
-	auth.PUT("/clients/:id", handlers.UpdateClient)     // Actualiza un cliente por ID
-	auth.DELETE("/clients/:id", handlers.DeleteClient)  // Elimina un cliente por ID
+	auth.GET("/clients/:id", handlers.GetClient)
+	auth.GET("/clients", handlers.GetAll)
+	auth.GET("/clients/kpi", handlers.GetClientKPI)
+	auth.POST("/clients", handlers.CreateClient)
+	auth.PUT("/clients/:id", handlers.UpdateClient)
+	auth.DELETE("/clients/:id", handlers.DeleteClient)
 	auth.GET("/users/:id", handlers.GetUser)
 	auth.GET("/users", handlers.GetAllUsers)
 	auth.GET("/groups/:id", handlers.GetGroup)
@@ -80,9 +79,7 @@ func main() {
 
 // HandleRequest is the Lambda handler for the API Gateway events
 func HandleRequest(e *echo.Echo) func(events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	// Create a new Echo adapter for Lambda
 	apiProxy := echoadapter.New(e)
 
-	// Return the Lambda handler function
 	return apiProxy.Proxy
 }

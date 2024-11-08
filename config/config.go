@@ -13,7 +13,6 @@ import (
 var DB *gorm.DB
 var isTestEnv bool
 
-// DBInterface es la interfaz para abstraer el uso de la base de datos en las pruebas
 type DBInterface interface {
 	Create(value interface{}) *gorm.DB
 	Find(out interface{}, where ...interface{}) *gorm.DB

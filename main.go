@@ -5,12 +5,13 @@ import (
 	"golangApp/handlers"
 	"golangApp/middlewares"
 
+	_ "golangApp/docs"
+
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/swaggo/echo-swagger"
-	_ "golangApp/docs"
+	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
 // @title Swagger Example API
@@ -39,13 +40,12 @@ func main() {
 	// Apply the Basic Auth Middleware only to specific routes
 	auth.Use(middleware.BasicAuth(middlewares.BasicAuthMiddleware))
 
-	// Define routes without authentication
-	auth.GET("/clients/:id", handlers.GetClient)        // Obtiene un cliente por ID
-	auth.GET("/clients", handlers.GetAll)               // Obtiene todos los clientes
-	auth.GET("/clients/kpi", handlers.GetClientKPI)     // KPI de clientes
-	auth.POST("/clients", handlers.CreateClient)        // Crea un nuevo cliente
-	auth.PUT("/clients/:id", handlers.UpdateClient)     // Actualiza un cliente por ID
-	auth.DELETE("/clients/:id", handlers.DeleteClient)  // Elimina un cliente por ID
+	auth.GET("/clients/:id", handlers.GetClient)
+	auth.GET("/clients", handlers.GetAll)
+	auth.GET("/clients/kpi", handlers.GetClientKPI)
+	auth.POST("/clients", handlers.CreateClient)
+	auth.PUT("/clients/:id", handlers.UpdateClient)
+	auth.DELETE("/clients/:id", handlers.DeleteClient)
 	auth.GET("/users/:id", handlers.GetUser)
 	auth.GET("/users", handlers.GetAllUsers)
 	auth.GET("/groups/:id", handlers.GetGroup)

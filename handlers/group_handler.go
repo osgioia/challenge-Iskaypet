@@ -1,4 +1,3 @@
-// handlers/group_handler.go
 package handlers
 
 import (
@@ -21,7 +20,6 @@ func GetGroup(c echo.Context) error {
 	id := c.Param("id")
 	var group models.Group
 
-	// Mencari group berdasarkan ID
 	if err := config.DB.First(&group, id).Error; err != nil {
 		return c.JSON(http.StatusNotFound, echo.Map{
 			"message": "Group not found",
@@ -40,7 +38,6 @@ func GetGroup(c echo.Context) error {
 func GetAllGroups(c echo.Context) error {
 	var groups []models.Group
 
-	// Mengambil semua grup
 	if err := config.DB.Find(&groups).Error; err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"message": "Failed to retrieve groups",
@@ -60,21 +57,18 @@ func GetAllGroups(c echo.Context) error {
 func CreateGroup(c echo.Context) error {
 	var group models.Group
 
-	// Bind input JSON to the group struct
 	if err := c.Bind(&group); err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{
 			"message": "Invalid input",
 		})
 	}
 
-	// Validate the required fields
 	if group.Name == "" {
 		return c.JSON(http.StatusBadRequest, echo.Map{
 			"message": "Group name is required",
 		})
 	}
 
-	// Create the new group in the database
 	if err := config.DB.Create(&group).Error; err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"message": "Failed to create group",
@@ -110,21 +104,18 @@ func AssignGroup(c echo.Context) error {
 	var user models.User
 	var group models.Group
 
-	// Mencari user berdasarkan ID
 	if err := config.DB.First(&user, userID).Error; err != nil {
 		return c.JSON(http.StatusNotFound, echo.Map{
 			"message": "User not found",
 		})
 	}
 
-	// Mencari group berdasarkan ID
 	if err := config.DB.First(&group, groupID).Error; err != nil {
 		return c.JSON(http.StatusNotFound, echo.Map{
 			"message": "Group not found",
 		})
 	}
 
-	// Menetapkan group ke user
 	if err := config.DB.Model(&user).Association("Groups").Append(&group); err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"message": "Failed to assign group",
@@ -160,7 +151,6 @@ func RemoveAssignGroup(c echo.Context) error {
 	var user models.User
 	var group models.Group
 
-	// Cek apakah user dan group ada di database
 	if err := config.DB.First(&user, userID).Error; err != nil {
 		return c.JSON(http.StatusNotFound, echo.Map{
 			"message": "User not found",
@@ -173,7 +163,6 @@ func RemoveAssignGroup(c echo.Context) error {
 		})
 	}
 
-	// Menghapus relasi group dari user
 	if err := config.DB.Model(&user).Association("Groups").Delete(&group); err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"message": "Failed to remove group assignment",
@@ -194,14 +183,12 @@ func RemoveGroup(c echo.Context) error {
 	id := c.Param("group_id")
 	var group models.Group
 
-	// Mencari group berdasarkan ID
 	if err := config.DB.First(&group, id).Error; err != nil {
 		return c.JSON(http.StatusNotFound, echo.Map{
 			"message": "Group not found",
 		})
 	}
 
-	// Menghapus grup dari database
 	if err := config.DB.Delete(&group).Error; err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
 			"message": "Failed to delete group",

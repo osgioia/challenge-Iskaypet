@@ -25,7 +25,6 @@ func HandleLogin(c echo.Context) error {
 	username := c.FormValue("username")
 	password := c.FormValue("password")
 
-	// Buscar el usuario en la base de datos
 	var user models.User
 	if err := config.DB.Where("username = ?", username).First(&user).Error; err != nil {
 		return c.JSON(http.StatusUnauthorized, echo.Map{
@@ -33,14 +32,12 @@ func HandleLogin(c echo.Context) error {
 		})
 	}
 
-	// Verificar la contraseña
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 		return c.JSON(http.StatusUnauthorized, echo.Map{
 			"error": "Invalid username or password",
 		})
 	}
 
-	// Actualizar el tiempo del último inicio de sesión
 	user.LastLogin = time.Now()
 	if err := config.DB.Save(&user).Error; err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
@@ -48,7 +45,6 @@ func HandleLogin(c echo.Context) error {
 		})
 	}
 
-	// Configurar la sesión
 	sess, err := session.Get("session", c)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{
@@ -64,7 +60,6 @@ func HandleLogin(c echo.Context) error {
 		})
 	}
 
-	// Devolver el hash de la contraseña en la respuesta
 	return c.JSON(http.StatusOK, echo.Map{
 		"hash": user.Password,
 	})

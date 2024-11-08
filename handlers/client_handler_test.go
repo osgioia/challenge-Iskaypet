@@ -440,10 +440,8 @@ func TestDeleteClient(t *testing.T) {
 }
 
 func TestCreateClientIntegration(t *testing.T) {
-	// Configura la base de datos de prueba
 	setupTestDB()
 
-	// Configura Echo y crea un request y recorder
 	e := echo.New()
 	client := models.Client{
 		Name:      "Juan",
@@ -454,7 +452,6 @@ func TestCreateClientIntegration(t *testing.T) {
 		Telephone: "123456789",
 	}
 
-	// Crea un request POST para crear un nuevo cliente
 	reqBody := fmt.Sprintf(`{
 		"name": "%s",
 		"last_name": "%s",
@@ -468,30 +465,23 @@ func TestCreateClientIntegration(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	// Llama a la función CreateClient
 	err := CreateClient(c)
 
-	// Aserciones
 	if assert.NoError(t, err) {
-		// Verifica que la respuesta es 201 Created
 		assert.Equal(t, http.StatusCreated, rec.Code)
-		fmt.Print(err)
-		// Verifica que el cliente ha sido creado en la base de datos
+
 		var createdClient models.Client
 		config.DB.Last(&createdClient)
 		assert.Equal(t, client.Name, createdClient.Name)
 		assert.Equal(t, client.Email, createdClient.Email)
 	}
 
-	// Limpia la base de datos para futuras pruebas
 	config.DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&models.Client{})
-} //PASS
+}
 
 func TestUpdateClientIntegration(t *testing.T) {
-	// Configura la base de datos de prueba
 	setupTestDB()
 
-	// Configura Echo y crea un request y recorder
 	e := echo.New()
 	client := models.Client{
 		ID:        1,
@@ -503,10 +493,8 @@ func TestUpdateClientIntegration(t *testing.T) {
 		Telephone: "123456789",
 	}
 
-	// Inserta un cliente en la base de datos para probar la actualización
 	config.DB.Create(&client)
 
-	// Crea un request PUT para actualizar el cliente
 	updatedClient := models.Client{
 		Name:      "John Updated",
 		LastName:  "Doe Updated",
@@ -528,30 +516,23 @@ func TestUpdateClientIntegration(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	// Llama a la función UpdateClient
 	err := UpdateClient(c)
 
-	// Aserciones
 	if assert.NoError(t, err) {
-		// Verifica que la respuesta es 200 OK
 		assert.Equal(t, http.StatusOK, rec.Code)
 
-		// Verifica que los datos del cliente han sido actualizados en la base de datos
 		var clientInDB models.Client
 		config.DB.First(&clientInDB, 1)
 		assert.Equal(t, updatedClient.Name, clientInDB.Name)
 		assert.Equal(t, updatedClient.Email, clientInDB.Email)
 	}
 
-	// Limpia la base de datos para futuras pruebas
 	config.DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&models.Client{})
-} // PASS
+}
 
 func TestDeleteClientIntegration(t *testing.T) {
-	// Configura la base de datos de prueba en memoria
 	setupTestDB()
 
-	// Inserta un cliente de prueba
 	client := models.Client{
 		Name:      "Juan",
 		LastName:  "Doe",
@@ -565,39 +546,30 @@ func TestDeleteClientIntegration(t *testing.T) {
 		t.Fatalf("Error al insertar el cliente: %v", result.Error)
 	}
 
-	// Configura Echo y crea un request y recorder para capturar la respuesta
 	e := echo.New()
-	req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/clients/%d", client.ID), nil) // Usa el ID del cliente insertado
+	req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/clients/%d", client.ID), nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	// Establece el parámetro "id" en el contexto
 	c.SetParamNames("id")
 	c.SetParamValues(fmt.Sprintf("%d", client.ID))
 
-	// Ejecuta la función DeleteClient
 	err := DeleteClient(c)
 
-	// Aserciones
 	if assert.NoError(t, err) {
 		assert.Equal(t, http.StatusNoContent, rec.Code)
 
-		// Verifica que el cliente con ID correspondiente haya sido eliminado
 		var deletedClient models.Client
 		result := config.DB.First(&deletedClient, client.ID)
-		// Si el cliente fue eliminado, el resultado debe ser un error (no encontrado)
 		assert.Error(t, result.Error, "Se esperaba que el cliente fuera eliminado")
 	}
 
-	// Limpia la base de datos para futuras pruebas
 	config.DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&models.Client{})
 }
 
 func TestGetAllIntegration(t *testing.T) {
-	// Configura la base de datos de prueba en memoria
 	setupTestDB()
 
-	// Inserta varios clientes de prueba
 	clients := []models.Client{
 		{
 			Name:      "John",
@@ -629,34 +601,27 @@ func TestGetAllIntegration(t *testing.T) {
 		config.DB.Create(&client)
 	}
 
-	// Configura Echo y crea un request y recorder para capturar la respuesta
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodGet, "/clients/", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	// Ejecuta la función GetAll
 	err := GetAll(c)
 
-	// Aserciones
 	if assert.NoError(t, err) {
 		assert.Equal(t, http.StatusOK, rec.Code)
 
-		// Verifica que haya más de 1 cliente
 		var returnedClients []models.Client
 		json.Unmarshal(rec.Body.Bytes(), &returnedClients)
 		assert.Greater(t, len(returnedClients), 1, "Se esperaba que el número de clientes devueltos sea mayor a 1")
 	}
 
-	// Limpia la base de datos para futuras pruebas
 	config.DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&models.Client{})
 }
 
 func TestGetClientIntegration(t *testing.T) {
-	// Configura la base de datos de prueba en memoria
 	setupTestDB()
 
-	// Crea un cliente de prueba en la base de datos
 	testClient := models.Client{
 		ID:        10,
 		Name:      "John",
@@ -668,24 +633,19 @@ func TestGetClientIntegration(t *testing.T) {
 	}
 	config.DB.Create(&testClient)
 
-	// Configura Echo y crea un request y recorder para capturar la respuesta
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodGet, "/clients/10", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	// Establece el parámetro de la URL
 	c.SetParamNames("id")
 	c.SetParamValues("10")
 
-	// Ejecuta la función GetClient
 	err := GetClient(c)
 
-	// Aserciones
 	if assert.NoError(t, err) {
 		assert.Equal(t, http.StatusOK, rec.Code)
 
-		// Verifica que el contenido de la respuesta sea el esperado
 		expectedResponse := `{
 			"id": 10,
 			"name": "John",
@@ -698,47 +658,36 @@ func TestGetClientIntegration(t *testing.T) {
 		assert.JSONEq(t, expectedResponse, rec.Body.String())
 	}
 
-	// Limpia la base de datos para futuras pruebas
 	config.DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&models.Client{})
 }
 func TestGetClientNotFoundIntegration(t *testing.T) {
-	// Configura la base de datos de prueba en memoria
 	setupTestDB()
 
-	// Configura Echo y crea un request y recorder para capturar la respuesta
 	e := echo.New()
 
-	// Solicitud para un cliente que no existe
 	req := httptest.NewRequest(http.MethodGet, "/clients/999", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	// Establece el parámetro de la URL
 	c.SetParamNames("id")
 	c.SetParamValues("999")
 
-	// Ejecuta la función GetClient
 	err := GetClient(c)
 
-	// Aserciones
 	if assert.NoError(t, err) {
 		assert.Equal(t, http.StatusNotFound, rec.Code)
 
-		// Verifica que el mensaje de error sea el esperado
 		var jsonErr map[string]string
 		json.Unmarshal(rec.Body.Bytes(), &jsonErr)
 		assert.Equal(t, "Client not found", jsonErr["error"])
 	}
 
-	// Limpia la base de datos para futuras pruebas
 	config.DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&models.Client{})
 }
 
 func TestCalculateClientKPIIntegration(t *testing.T) {
-	// Configura la base de datos de prueba en memoria
 	setupTestDB()
 
-	// Crea varios clientes con diferentes edades
 	clients := []models.Client{
 		{
 			ID:        1,
@@ -769,16 +718,13 @@ func TestCalculateClientKPIIntegration(t *testing.T) {
 		},
 	}
 
-	// Inserta los clientes en la base de datos de prueba
 	for _, client := range clients {
 		config.DB.Create(&client)
 	}
 
-	// Realiza la consulta para obtener todas las edades de los clientes
 	var ages []float64
 	config.DB.Model(&models.Client{}).Pluck("age", &ages)
 
-	// Realiza el cálculo de la media y desviación estándar
 	var sum float64
 	for _, age := range ages {
 		sum += age
@@ -794,10 +740,8 @@ func TestCalculateClientKPIIntegration(t *testing.T) {
 		expectedStdDev = float64(varianceSum / float64(len(ages)))
 	}
 
-	// Aserciones sobre el cálculo de la media y desviación estándar
 	assert.Equal(t, float64(30), expectedAverage)
 	assert.InDelta(t, float64(66.66666666666667), expectedStdDev, 0.000001)
 
-	// Limpia la base de datos para futuras pruebas
 	config.DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&models.Client{})
 }

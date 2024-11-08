@@ -1,19 +1,20 @@
 package handlers
 
 import (
+	"math"
 	"net/http"
 	"regexp"
 	"strconv"
 	"time"
-	"math"
+
+	"golangApp/config"
+	"golangApp/models"
 
 	"github.com/labstack/echo/v4"
-	"golangApp/models"
-	"golangApp/config"
 )
 
 type ClientKPI struct {
-	AverageAge          float64 `json:"average_age"`
+	AverageAge           float64 `json:"average_age"`
 	AgeStandardDeviation float64 `json:"age_standard_deviation"`
 }
 
@@ -49,7 +50,6 @@ func GetClient(c echo.Context) error {
 	return c.JSON(http.StatusOK, client)
 }
 
-// validEmail verifica si el email tiene un formato válido
 func validEmail(email string) bool {
 	const emailRegex = `^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$`
 	re := regexp.MustCompile(emailRegex)
@@ -71,7 +71,6 @@ func CreateClient(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request data"})
 	}
 
-	// Validaciones
 	if client.Name == "" || client.LastName == "" || client.Email == "" || client.Age == 0 || client.BirthDay.IsZero() {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Name, Last Name, Email, Age, and Birth Day are required"})
 	}
@@ -84,7 +83,6 @@ func CreateClient(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Phone number must be numeric and at least 7 digits long"})
 	}
 
-	// Validar que la edad concuerde con la fecha de nacimiento
 	currentYear := time.Now().Year()
 	calculatedAge := currentYear - client.BirthDay.Year()
 	if client.BirthDay.After(time.Now().AddDate(-client.Age, 0, 0)) {
@@ -120,14 +118,11 @@ func UpdateClient(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request data"})
 	}
 
-	// Validaciones similares a CreateClient
-
 	if err := config.DB.Save(&client).Error; err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusOK, client)
 }
-
 
 // DeleteClient elimina un cliente por ID
 // @Summary Eliminar cliente
@@ -180,13 +175,12 @@ func GetClientKPI(c echo.Context) error {
 	ageStandardDeviation := math.Sqrt(varianceSum / float64(len(ages)))
 
 	kpi := ClientKPI{
-		AverageAge:          averageAge,
+		AverageAge:           averageAge,
 		AgeStandardDeviation: ageStandardDeviation,
 	}
 	return c.JSON(http.StatusOK, kpi)
 }
 
-// isNumeric verifica si el string contiene solo números
 func isNumeric(s string) bool {
 	_, err := strconv.Atoi(s)
 	return err == nil
