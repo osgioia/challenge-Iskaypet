@@ -9,5 +9,5 @@ type Client struct {
 	Email     string    `json:"email" gorm:"unique;not null"`
 	BirthDay  time.Time `json:"birth_day" gorm:"not null"`
 	Age       int       `json:"age" gorm:"not null"`
-	Telephone  string   `json:"Telephone"`
+	Telephone string    `json:"telephone"`
 }
